@@ -26,26 +26,30 @@ for publicacao_xml in publicacoes_xmls:
     xml_filename = xmls_path+publicacao_xml
             
     tree = ET.parse(xml_filename)
-    root = mytree.getroot()
+    root = tree.getroot()
         
     for child in root:
         tag_xml = child.tag
         content_xml = child.attrib
 
+    """ Atributos highlightimage e highlightimagename nem sempre estão presentes nas tags dos xmls, por isso sao desconsiderados ~"""
+    
     for attribute in content_xml:
+        
+        if attribute != "highlightimage" and attribute != "highlightimagename":
+            
+            if attribute not in dicionario:
+                dicionario[attribute] = []
+                dicionario[attribute].append(content_xml[attribute])
+            else:
+                dicionario[attribute].append(content_xml[attribute])
 
-      if attribute not in dicionario:
-        dicionario[attribute] = []
-        dicionario[attribute].append(content_xml[attribute])
-      else:
-        dicionario[attribute].append(content_xml[attribute])
-
-    for x in myroot[0][0]:
-      if x.tag not in dicionario:
-        dicionario[x.tag] = []
-        dicionario[x.tag].append(x.text)
-      else:
-        dicionario[x.tag].append(x.text)
+    for x in root[0][0]:
+        if x.tag not in dicionario:
+            dicionario[x.tag] = []
+            dicionario[x.tag].append(x.text)
+        else:
+            dicionario[x.tag].append(x.text)
 
 """Gera um DataFrame:"""
 
